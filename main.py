@@ -1,3 +1,4 @@
+import sys
 import requests
 import tempfile
 from svglib.svglib import svg2rlg
@@ -9,7 +10,18 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-URL = "https://musescore.com/user/12461571/scores/3291706"
+# py main.py [musescore link] "[name of pdf]"
+
+URL = sys.argv[1]
+name = sys.argv[2]
+
+print(sys.argv[1])
+print(sys.argv[2])
+
+if not sys.argv[1] or not sys.argv[2]:
+    print("Missing arguments. Please follow this format:")
+    print(r'py main.py [musescore link] "[name of pdf]"')
+    sys.exit()
 
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
@@ -57,5 +69,5 @@ writer = PdfWriter()
 for i in range(page):
     reader = PdfReader(f'{tempDir.name}/pg{i+1}.pdf')
     writer.addpages(reader.pages)
-name = input("Enter name for the pdf: ")
 writer.write(f'{name}.pdf')
+print("PDF created!")
