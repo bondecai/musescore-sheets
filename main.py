@@ -12,16 +12,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # py main.py [musescore link] "[name of pdf]"
 
-URL = sys.argv[1]
-name = sys.argv[2]
-
-print(sys.argv[1])
-print(sys.argv[2])
-
 if not sys.argv[1] or not sys.argv[2]:
     print("Missing arguments. Please follow this format:")
     print(r'py main.py [musescore link] "[name of pdf]"')
     sys.exit()
+
+URL = sys.argv[1]
+name = sys.argv[2]
 
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
@@ -71,3 +68,4 @@ for i in range(page):
     writer.addpages(reader.pages)
 writer.write(f'{name}.pdf')
 print("PDF created!")
+tempDir.cleanup()
