@@ -3,12 +3,13 @@ import tempfile
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
 from pdfrw import PdfReader, PdfWriter
+import img2pdf
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-URL = "https://musescore.com/user/4923276/scores/5516956"
+URL = "https://musescore.com/user/12461571/scores/3291706"
 
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
@@ -31,22 +32,25 @@ for webEl in div:
 	currentPage += 1
 driver.quit()
 
-pngFlag = False
-svgFlag = False
-if "png" in links[0]:
-	pngFlag = True
-else:
-	svgFlag = True
-
 page = 0
 tempDir = tempfile.TemporaryDirectory()
-for links in links:
-    r = requests.get(links, allow_redirects=True)
-    open(f'{tempDir.name}/score_{page}.svg', 'wb').write(r.content)
-    page += 1
-for i in range(page):
-    drawing = svg2rlg(f'{tempDir.name}/score_{i}.svg')
-    renderPDF.drawToFile(drawing, f'{tempDir.name}/pg{i+1}.pdf')
+if "png" in links[0]:
+    print("WARNING: PDF will have lower quality because Musescore provided png's instead of svg's")
+    for link in links:
+        r = requests.get(link, allow_redirects=True)
+        open(f'{tempDir.name}/score_{page}.png', 'wb').write(r.content)
+        page += 1
+    for i in range(page):
+        with open(f'{tempDir.name}/pg{i+1}.pdf', 'wb') as f:
+            f.write(img2pdf.convert(f'{tempDir.name}/score_{i}.png'))
+else:
+    for link in links:
+        r = requests.get(link, allow_redirects=True)
+        open(f'{tempDir.name}/score_{page}.svg', 'wb').write(r.content)
+        page += 1
+    for i in range(page):
+        drawing = svg2rlg(f'{tempDir.name}/score_{i}.svg')
+        renderPDF.drawToFile(drawing, f'{tempDir.name}/pg{i+1}.pdf')
 
 # Merge pdfs 
 writer = PdfWriter()
