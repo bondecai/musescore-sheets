@@ -6,3 +6,4 @@
 
 ## Musescore randomizes class names to prevent web scraping...
 > https://medium.com/geekculture/bypass-scraping-websites-that-has-css-class-names-change-frequently-d4877ecd6d8f  
+> Class names will be the same for each page of the sheet music
