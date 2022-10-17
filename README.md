@@ -1,4 +1,6 @@
 # musescore-sheets
+> puppeteer  
+
 ## Might try to convert PNGs to SVGs to make the end product PDF look better
 > https://github.com/IngJavierR/PngToSvg  
 > https://pypi.org/project/pypotrace/  
