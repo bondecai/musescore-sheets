@@ -50,20 +50,27 @@ def main():
     # GET NAME AND NUMBER OF PAGES #
     ################################
     name = driver.find_elements(By.XPATH, "/html/body/div[1]/div/section/aside/div[1]/h1/span")[0].get_attribute('textContent')
-    pages = driver.find_elements(By.XPATH, "/html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div")[0].get_attribute('textContent')
-    print(f"Detected sheet with name: {name} and with {pages} pages")
+    # pages = driver.find_elements(By.XPATH, "/html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div")[0].get_attribute('textContent')
+    # DIFFERENT XPATH FOR PAGE NUMBER WTF?????
+    # /html/body/div[1]/div[1]/section/aside/div[5]/div[2]/table/tbody/tr[5]/td/div
+    # /html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div
     
     ####################################################################
     # GET LINKS                                                        #
     # Create a list of download links for each page of the sheet music #
     ####################################################################
     links = []
-    for x in range(1, int(pages)+1):
+    pages = 0
+    for x in range(1, 51): # Could make this an infinite loop but hard stop at 50 iterations in case
         webElement = driver.find_elements(By.XPATH, f"/html/body/div[1]/div/section/main/div/div[3]/div/div/div[{x}]/img")
+        if len(webElement) <= 0:
+            break
         link = webElement[0].get_attribute('src')
         links.append(link)
+        pages += 1
+    print(f"Found sheet with name: {name} and with {pages} pages")
     print(f"Links found: {links}")
-
+    
     # Bypass anti-scraping measure: Cloudflare "Just a moment..." page
     ################################################
     # Getting the first page of the sheet requires #
