@@ -1,4 +1,5 @@
 import sys
+import re
 import requests
 import tempfile
 from svglib.svglib import svg2rlg
@@ -49,10 +50,16 @@ def main():
     ################################
     # GET NAME AND NUMBER OF PAGES #
     ################################
-    name = driver.find_elements(By.XPATH, "/html/body/div[1]/div/section/aside/div[1]/h1/span")[0].get_attribute('textContent')
+    illegal_chars_pattern = r'[<>:"/\\|?*\x00-\x1F]'
+    try:
+        name = driver.find_elements(By.XPATH, "/html/body/div[1]/div[1]/section/aside/div[1]/div[1]/h1/span")[0].get_attribute('textContent')
+        name = re.sub(illegal_chars_pattern, "", name)
     # pages = driver.find_elements(By.XPATH, "/html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div")[0].get_attribute('textContent')
     # /html/body/div[1]/div[1]/section/aside/div[5]/div[2]/table/tbody/tr[5]/td/div
     # /html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div
+    except Exception as e:
+        print(f"Error getting name: {e}")
+        print("This usually means the xpath needs to be updated")
     
     ####################################################################
     # GET LINKS                                                        #
