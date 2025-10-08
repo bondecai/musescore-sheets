@@ -54,9 +54,6 @@ def main():
     try:
         name = driver.find_elements(By.XPATH, "/html/body/div[1]/div[1]/section/aside/div[1]/div[1]/h1/span")[0].get_attribute('textContent')
         name = re.sub(illegal_chars_pattern, "", name)
-    # pages = driver.find_elements(By.XPATH, "/html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div")[0].get_attribute('textContent')
-    # /html/body/div[1]/div[1]/section/aside/div[5]/div[2]/table/tbody/tr[5]/td/div
-    # /html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div
     except Exception as e:
         print(f"Error getting name: {e}")
         print("This usually means the xpath needs to be updated")
