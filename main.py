@@ -97,6 +97,7 @@ def main():
     ##############################################
 
     # "Patch" the setDash method to handle negative dashes
+    # the values within an SVG stroke-dasharray attribute cannot be negative
     original_setDash = Canvas.setDash
 
     # Create patched version
