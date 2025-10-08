@@ -4,7 +4,7 @@ import tempfile
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
 from pdfrw import PdfReader, PdfWriter
-# import img2pdf
+import img2pdf
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -51,7 +51,6 @@ def main():
     ################################
     name = driver.find_elements(By.XPATH, "/html/body/div[1]/div/section/aside/div[1]/h1/span")[0].get_attribute('textContent')
     # pages = driver.find_elements(By.XPATH, "/html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div")[0].get_attribute('textContent')
-    # DIFFERENT XPATH FOR PAGE NUMBER WTF?????
     # /html/body/div[1]/div[1]/section/aside/div[5]/div[2]/table/tbody/tr[5]/td/div
     # /html/body/div[1]/div[1]/section/aside/div[4]/div[2]/table/tbody/tr[5]/td/div
     
