@@ -15,6 +15,7 @@ from reportlab.pdfgen.canvas import Canvas
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 ###############################
 # HOW TO USE                  #
 # py main.py [musescore link] #
@@ -57,6 +58,7 @@ def main():
     except Exception as e:
         print(f"Error getting name: {e}")
         print("This usually means the xpath needs to be updated")
+        name = input("Enter name manually: ")
     
     ####################################################################
     # GET LINKS                                                        #
@@ -83,14 +85,31 @@ def main():
     link0 = links[0]
     driver.get(link0)
     wait = WebDriverWait(driver, 10)
-    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "svg")))
+    try:
+        print("Checking if musescore provided SVGs")
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "svg")))
+        content = driver.page_source
+        with open(f'{tempDir.name}/score_0.svg', "w", encoding="utf-8") as f:
+            f.write(content)
+    except Exception as e:
+        # Musescore serves the first page of PNG sheets inside an <img> tag
+        print(f"Musescore probably didn't provide SVGs: {e}")
+        content = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "img")))
+        img_url = content.get_attribute('src')
 
-    # After the SVG is loaded, the entire page source should be the SVG content
-    svg_content = driver.page_source
+        # Create a requests session and transfer cookies from Selenium to it
+        # This makes the request look like it's coming from the same browser session
+        session = requests.Session()
+        for cookie in driver.get_cookies():
+            session.cookies.set(cookie['name'], cookie['value'])
 
-    with open(f'{tempDir.name}/score_0.svg', "w", encoding="utf-8") as f:
-        f.write(svg_content)
-
+        # Use the session to download the image, which now has the correct cookies
+        response = session.get(img_url, allow_redirects=True)
+        print(response)
+        with open(f'tempfolder/score_0.png', "wb") as f:
+            f.write(response.content)
+        
+    return None
     ##############################################
     # SHEET DOWNLOAD AND CONVERSION TO PDF       #
     # Download sheets into a temporary directory #
@@ -112,13 +131,13 @@ def main():
     page = 1
     if "png" in links[0]:
         print("WARNING: PDF will have lower quality because Musescore provided png's instead of svg's")
-        for link in links:
+        for link in links[1:]:
             r = requests.get(link, allow_redirects=True)
-            open(f'{tempDir.name}/score_{page}.png', 'wb').write(r.content)
+            open(f'tempfolder/score_{page}.png', 'wb').write(r.content)
             page += 1
         for i in range(page):
-            with open(f'{tempDir.name}/pg{i+1}.pdf', 'wb') as f:
-                f.write(img2pdf.convert(f'{tempDir.name}/score_{i}.png'))
+            with open(f'tempfolder/pg{i+1}.pdf', 'wb') as f:
+                f.write(img2pdf.convert(f'tempfolder/score_{i}.png'))
     else:
         print(f"Downloading {name} with {pages} pages (SVG)")
         for link in links[1:]:
@@ -133,7 +152,7 @@ def main():
     # Merge pdfs 
     writer = PdfWriter()
     for i in range(page):
-        reader = PdfReader(f'{tempDir.name}/pg{i+1}.pdf')
+        reader = PdfReader(f'tempfolder/pg{i+1}.pdf')
         writer.addpages(reader.pages)
     writer.write(f'{name}.pdf')
     print(f"{name}.pdf created!")
