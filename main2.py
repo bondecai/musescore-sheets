@@ -45,6 +45,13 @@ def main():
         cleanup(tempDir, driver)
     elif "png" in links[0]:
         print("WARNING: PDF will have lower quality because Musescore provided png's instead of svg's")
+        print(f"Downloading {name} with {pages} pages from {URL}")
+        create_pdfs_png(driver, tempDir, links, None, None)
+        print("Merging PDFs")
+        merge_pdfs(name, pages, tempDir)
+        print("Cleaning up")
+        cleanup(tempDir, driver)
+
 
 
 

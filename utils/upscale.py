@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def upscale_and_sharpen(img, scale_factor=2, sharpen_amount=0.5, sharpen_radius=3):
+def upscale_and_sharpen(path, scale_factor=2, sharpen_amount=0.5, sharpen_radius=3):
     """
     Upscales an image using Lanczos interpolation and then applies an
     unsharp mask to enhance sharpness.
@@ -12,6 +12,9 @@ def upscale_and_sharpen(img, scale_factor=2, sharpen_amount=0.5, sharpen_radius=
     :param sharpen_radius: The radius for the Gaussian blur used in the unsharp mask.
                            Smaller values (1-3) sharpen finer details.
     """
+
+    img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
     # Get original dimensions and calculate new dimensions
     height, width = img.shape[:2]
     new_dimensions = (int(width * scale_factor), int(height * scale_factor))
@@ -33,7 +36,6 @@ def upscale_and_sharpen(img, scale_factor=2, sharpen_amount=0.5, sharpen_radius=
 
     return sharpened_img
 
-img = cv2.imread('score_0.png', cv2.IMREAD_GRAYSCALE)
 # dimensions = img.shape[0:2]
 # dimensions = dimensions[::-1] # img.shape is (y, x) so reverse it to (x, y)
 # scale_factor = 2
@@ -53,8 +55,8 @@ img = cv2.imread('score_0.png', cv2.IMREAD_GRAYSCALE)
 
 # Use custom upscaler
 # THIS ONE IS BEST SO FAR
-custom_upscaled = upscale_and_sharpen(img, scale_factor=2, sharpen_amount=0.5, sharpen_radius=3)
-cv2.imwrite('custom_upscaled.png', custom_upscaled)
+# custom_upscaled = upscale_and_sharpen(img, scale_factor=2, sharpen_amount=0.5, sharpen_radius=3)
+# cv2.imwrite('custom_upscaled.png', custom_upscaled)
 
 # More intense sharpening on finer details
 # more_sharpened = upscale_and_sharpen(img, scale_factor=2, sharpen_amount=1.0, sharpen_radius=1)

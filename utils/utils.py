@@ -4,9 +4,11 @@ from pdfrw import PdfReader, PdfWriter
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
 import requests
+import img2pdf
 from reportlab.pdfgen.canvas import Canvas
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from utils.upscale import *
 
 def get_name(driver):
     illegal_chars_pattern = r'[<>:"/\\|?*\x00-\x1F]'
@@ -19,8 +21,6 @@ def get_name(driver):
         name = input("Enter name manually: ")
     return name
 
-
-
 def get_links_and_pages(driver):
     links = []
     pages = 0
@@ -32,8 +32,6 @@ def get_links_and_pages(driver):
         links.append(link)
         pages += 1
     return links, pages
-
-
 
 def create_pdfs_svg(driver, tempDir, links, pages, name):
     # "Patch" the setDash method to handle negative dashes
@@ -67,6 +65,34 @@ def create_pdfs_svg(driver, tempDir, links, pages, name):
         print(f"Converting {tempDir.name}/score_{i}.svg to PDF")
         drawing = svg2rlg(f'{tempDir.name}/score_{i}.svg')
         renderPDF.drawToFile(drawing, f'{tempDir.name}/pg{i+1}.pdf')
+
+    return None
+
+def create_pdfs_png(driver, tempDir, links, pages, name):
+    link0 = links[0]
+    driver.get(link0)
+    image = driver.find_element(By.TAG_NAME, "img")
+    screenshot_path = f"{tempDir.name}/score_0.png"
+    if image.screenshot(screenshot_path):
+        page = 1
+        for link in links[1:]:
+            r = requests.get(link, allow_redirects=True)
+            open(f'{tempDir.name}/score_{page}.png', 'wb').write(r.content)
+            page += 1
+
+        # Upscale image
+        for i in range(page):
+            upscaled_img = upscale_and_sharpen(f'{tempDir.name}/score_{i}.png', scale_factor=2, sharpen_amount=0.5, sharpen_radius=3)
+            cv2.imwrite(f'{tempDir.name}/score_{i}.png', upscaled_img)
+
+        for i in range(page):
+            with open(f'{tempDir.name}/pg{i+1}.pdf', 'wb') as f:
+                f.write(img2pdf.convert(f'{tempDir.name}/score_{i}.png'))
+    else:
+        print("Failed to download the first page...")
+        print("Aborting")
+        return None
+
 
     return None
 
