@@ -5,3 +5,5 @@ selenium==4.31.0
 svglib==1.5.1
 webdriver_manager==4.0.2
 img2pdf==0.6.1
+opencv-python==4.12.0.88
+numpy==1.26.4
