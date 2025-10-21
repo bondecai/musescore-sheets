@@ -37,19 +37,19 @@ def main():
 
 
     if "svg" in links[0]:
-        print(f"Downloading {name} with {pages} pages from {URL}")
+        print(f"{BOLD}Downloading {name} with {pages} pages from {URL}{END}")
         create_pdfs_svg(driver, tempDir, links, pages, name)
-        print("Merging PDFs")
+        print(f"{BOLD}Merging PDFs{END}")
         merge_pdfs(name, pages, tempDir)
-        print("Cleaning up")
+        print(f"{BOLD}Cleaning up{END}")
         cleanup(tempDir, driver)
     elif "png" in links[0]:
-        print("WARNING: PDF will have lower quality because Musescore provided png's instead of svg's")
+        print(f"{BOLD}WARNING: PDF will have lower quality because Musescore provided png's instead of svg's{END}")
         print(f"Downloading {name} with {pages} pages from {URL}")
         create_pdfs_png(driver, tempDir, links, None, None)
-        print("Merging PDFs")
+        print(f"{BOLD}Merging PDFs{END}")
         merge_pdfs(name, pages, tempDir)
-        print("Cleaning up")
+        print(f"{BOLD}Cleaning up{END}")
         cleanup(tempDir, driver)
 
 
