@@ -33,7 +33,7 @@ def get_links_and_pages(driver):
         pages += 1
     return links, pages
 
-def create_pdfs_svg(driver, tempDir, links, pages, name):
+def create_pdfs_svg(driver, tempDir, links):
     # "Patch" the setDash method to handle negative dashes
     # the values within an SVG stroke-dasharray attribute cannot be negative
     original_setDash = Canvas.setDash
@@ -68,7 +68,7 @@ def create_pdfs_svg(driver, tempDir, links, pages, name):
 
     return None
 
-def create_pdfs_png(driver, tempDir, links, pages, name):
+def create_pdfs_png(driver, tempDir, links):
     link0 = links[0]
     driver.get(link0)
     image = driver.find_element(By.TAG_NAME, "img")
