@@ -68,7 +68,7 @@ This project primarily faces challenges related to MuseScore's changing page str
 
 | Issue | Technical Detail / Cause | Workaround Implemented |
 | :--- | :--- | :--- |
-| **Outdated XPaths** | The script relies on specific `XPath` patterns to locate the score name and image links. If MuseScore's page layout changes, these XPaths will need to be updated. | The script will ask for the name manually if the extraction fails. |
+| **Outdated XPaths** | The script relies on specific `XPath` patterns to locate the score name and page number. If MuseScore's page layout changes, these XPaths will need to be updated. | The script will ask for the name manually if the extraction fails. |
 | **IP-Based Geolocation Changes** | MuseScore may intentionally or unintentionally change element XPaths if your IP address makes too many requests. | If the script breaks, check if the XPaths in `utils.py` are still valid. |
 | **Lower Quality PNGs** | Some scores provide lower-resolution PNG files instead of scalable SVG files. | The script automatically applies an image enhancement filter (`upscale.py`) to upscale and sharpen PNGs before PDF conversion to improve print quality. |
 | **SVG Rendering Errors** | Negative values in an SVG's `stroke-dasharray` attribute can cause issues with PDF rendering libraries. | The `create_pdfs_svg` function includes a **monkey-patch** for the `reportlab` library to convert negative dash values to positive ones, preventing conversion errors. |
